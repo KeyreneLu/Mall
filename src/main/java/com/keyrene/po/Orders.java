@@ -1,6 +1,8 @@
 package com.keyrene.po;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Orders {
     private String oid;
@@ -15,9 +17,23 @@ public class Orders {
 
     private String name;
 
-    private String telephone;
+    private String telephone;//用户电话号码
 
     private String uid;
+
+    private User user;
+
+    //该订单有多少个订单项
+    List<Orderitem> orderitems = new ArrayList<>();
+
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public String getOid() {
         return oid;
@@ -75,7 +91,15 @@ public class Orders {
         this.telephone = telephone == null ? null : telephone.trim();
     }
 
-    public String getUid() {
+    public List<Orderitem> getOrderitems() {
+        return orderitems;
+    }
+
+    public void setOrderitems(List<Orderitem> orderitems) {
+        this.orderitems = orderitems;
+    }
+
+        public String getUid() {
         return uid;
     }
 

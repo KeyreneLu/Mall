@@ -26,69 +26,69 @@ public class ProductController extends BaseController {
     ProductService productService;
 
     @RequestMapping("/index")
-    public String findHotList(HttpServletRequest request, HttpServletResponse response){
+    public String findHotList(HttpServletRequest request, HttpServletResponse response) {
         List<Product> newProductList = productService.findNewProductList();
         List<Product> hotProductList = productService.findHotProductList();
 
-        request.setAttribute("HotProductList",hotProductList);
-        request.setAttribute("NewProductList",newProductList);
+        request.setAttribute("HotProductList", hotProductList);
+        request.setAttribute("NewProductList", newProductList);
 
 //        System.out.print("New+Hot"+hotProductList.size()+"="+newProductList.size());
         return "index";
     }
 
     @RequestMapping("/list")
-    public String selectProductByCid(@RequestParam("categoryid")String id,HttpServletRequest request,@RequestParam(value="currentPage", defaultValue="1") int currentPage){
-        EasyUiDataForGrid grid = productService.selectAllProductByCid(id,currentPage);
-        request.setAttribute("productList",grid);
-        request.setAttribute("cid",id);
+    public String selectProductByCid(@RequestParam("categoryid") String id, HttpServletRequest request, @RequestParam(value = "currentPage", defaultValue = "1") int currentPage) {
+        EasyUiDataForGrid grid = productService.selectAllProductByCid(id, currentPage);
+        request.setAttribute("productList", grid);
+        request.setAttribute("cid", id);
 
         List<Product> products = new ArrayList<>();
         Cookie[] cookies = request.getCookies();
-        if (cookies != null){
-            for (Cookie cookie : cookies){
-                if ("pids".equals(cookie.getName())){
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("pids".equals(cookie.getName())) {
                     String pids = cookie.getValue();
                     String[] pidList = pids.split("-");
 
-                    for (String pid :pidList){
+                    for (String pid : pidList) {
                         products.add(productService.selectProductByPid(pid));
                     }
                 }
             }
         }
 
-        request.setAttribute("history",products);
+        request.setAttribute("history", products);
 
         return "product_list";
     }
 
     @RequestMapping("/productinfo")
-    public String selectOneProductByPid(@RequestParam("pid")String pid,HttpServletResponse response,HttpServletRequest request,@RequestParam("cid")String cid,@RequestParam("currentPage")int currentPage){
+    public String selectOneProductByPid(@RequestParam("pid") String pid, HttpServletResponse response, HttpServletRequest request, @RequestParam("cid") String cid, @RequestParam("currentPage") int currentPage) {
         Product product = productService.selectProductByPid(pid);
-        request.setAttribute("product",product);
-        request.setAttribute("cid",cid);
-        request.setAttribute("currentPage",currentPage);
+        request.setAttribute("product", product);
+        request.setAttribute("cid", cid);
+        request.setAttribute("currentPage", currentPage);
 
         String pids = pid;
         Cookie[] cookies = request.getCookies();
-        if (cookies != null){
-            for (Cookie cookie:cookies) {
-                if ("pids".equals(cookie.getName())){
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("pids".equals(cookie.getName())) {
                     pids = cookie.getValue();
 
-                    String[] pidList =  pids.split("-");
+                    String[] pidList = pids.split("-");
                     List<String> datas = Arrays.asList(pidList);
                     LinkedList<String> list = new LinkedList<>(datas);
-                    if (list.contains(pid)){
+                    if (list.contains(pid)) {
                         list.remove(pid);
                     }
                     list.addFirst(pid);
 
                     StringBuffer sb = new StringBuffer();
-                    for (int j = 0;j<list.size()&&j<7;j++){
+                    for (int j = 0; j < list.size() && j < 7; j++) {
                         sb.append(list.get(j));
-                        if (j!=list.size()-1){
+                        if (j != list.size() - 1) {
                             sb.append("-");
                         }
                     }
@@ -96,43 +96,74 @@ public class ProductController extends BaseController {
                 }
             }
         }
-        Cookie cookie = new Cookie("pids",pids);
+        Cookie cookie = new Cookie("pids", pids);
         response.addCookie(cookie);
         return "product_info";
     }
 
     @RequestMapping("/addcart")
-    public String addProductToCart(@RequestParam("pid")String pid,@RequestParam("buyNum")int buyNum,HttpServletRequest request,HttpServletResponse response){
+    public String addProductToCart(@RequestParam("pid") String pid, @RequestParam("buyNum") int buyNum, HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
 
         Product product = productService.selectProductByPid(pid);
 
         int number = buyNum;
 
-        double cost = product.getShopPrice()*buyNum;
+        double cost = product.getShopPrice() * buyNum;
 
         Cart cart = (Cart) session.getAttribute("cart");
 
-        if (cart == null){
+        if (cart == null) {
             cart = new Cart();
-        }else {
-           Set<String> pids =  cart.getItem().keySet();
-           for (String id : pids){
-               if (id.equals(pid)){
-                   CartItem cartItem = cart.getItem().get(pid);
-                    cost +=cartItem.getCost();
+        } else {
+            Set<String> pids = cart.getItem().keySet();
+            for (String id : pids) {
+                if (id.equals(pid)) {
+                    CartItem cartItem = cart.getItem().get(pid);
+                    cost += cartItem.getCost();
                     number += cartItem.getBuyNum();
-               }
-           }
+                }
+            }
         }
-        CartItem item = new CartItem(product,number,cost);
+        CartItem item = new CartItem(product, number, cost);
 
-        cart.setTotal(cart.getTotal()+product.getShopPrice()*buyNum);
-        cart.getItem().put(pid,item);
+        cart.setTotal(cart.getTotal() + product.getShopPrice() * buyNum);
+        cart.getItem().put(pid, item);
 
-        session.setAttribute("cart",cart);
+        session.setAttribute("cart", cart);
 
         return "redirect:/cart";
     }
 
+    @RequestMapping("/delete/cart")
+    public String deleteFromCart(@RequestParam("pid") String pid, HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession();
+
+        Cart cart = (Cart) session.getAttribute("cart");
+
+        Set<String> pids = cart.getItem().keySet();
+
+        if (cart != null) {
+            if (pids.size() <= 1) {
+                session.removeAttribute("cart");
+            } else {
+                CartItem item = cart.getItem().get(pid);
+                System.out.print(item.getCost() + "");
+                cart.setTotal(cart.getTotal() - item.getCost());
+                cart.getItem().remove(pid);
+            }
+        }
+        session.setAttribute("cart", cart);
+
+        return "redirect:/cart";
+    }
+
+    @RequestMapping("/clear/cart")
+    public String clearCart(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession();
+
+        session.removeAttribute("cart");
+
+        return "redirect:/cart";
+    }
 }

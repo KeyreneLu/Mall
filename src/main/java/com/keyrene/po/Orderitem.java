@@ -9,6 +9,8 @@ public class Orderitem {
 
     private String pid;
 
+    private Orders orders;
+
     private String oid;
 
     public String getItemid() {
@@ -49,5 +51,14 @@ public class Orderitem {
 
     public void setOid(String oid) {
         this.oid = oid == null ? null : oid.trim();
+    }
+
+
+    public Orders getOrders() {
+        return orders;
+    }
+
+    public void setOrders(Orders orders) {
+        this.orders = orders;
     }
 }

@@ -102,7 +102,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.keyrene.po.Orders" >
+  <insert id="insert" parameterType="com.keyrene.po.Orders">
     insert into orders (oid, ordertime, total, 
       state, address, name, 
       telephone, uid)
