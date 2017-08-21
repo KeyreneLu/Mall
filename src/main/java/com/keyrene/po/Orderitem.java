@@ -13,6 +13,16 @@ public class Orderitem {
 
     private String oid;
 
+    private Product product;
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
     public String getItemid() {
         return itemid;
     }

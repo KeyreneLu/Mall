@@ -24,6 +24,7 @@
     <mvc:resources mapping="/products/hao/**" location="/WEB-INF/products/hao/"/>
     <mvc:resources mapping="/products/1/**" location="/WEB-INF/products/1/"/>
     <mvc:resources mapping="/fonts/**" location="/WEB-INF/fonts/"/>
+    <mvc:resources mapping="/bank_img/**" location="/WEB-INF/bank_img/"/>
 
 
 

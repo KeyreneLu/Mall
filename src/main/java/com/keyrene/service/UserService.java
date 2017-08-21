@@ -12,4 +12,6 @@ public interface UserService {
     boolean updateUserByCode(String code);
 
     Boolean selectUserByName(String username);
+
+    User selectUserLoginByName(String name);
 }

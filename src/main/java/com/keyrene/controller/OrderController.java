@@ -37,8 +37,6 @@ public class OrderController extends BaseController {
     @RequestMapping("/addorder")
     public String addOrderByCart(HttpServletRequest request, HttpServletResponse response){
 
-        String pid;
-
         List<Orderitem> datas = new ArrayList<>();
 
         HttpSession session = request.getSession();
@@ -46,7 +44,7 @@ public class OrderController extends BaseController {
         User user = (User) session.getAttribute("user");
 
         if (user == null){
-            return "redirect:/login";
+            return "redirect:/account/login.html";
         }
         Orders orders = new Orders();
 
@@ -63,6 +61,12 @@ public class OrderController extends BaseController {
         orders.setTelephone(null);
         Cart cart = (Cart) session.getAttribute("cart");
 
+        orders.setTotal(cart.getTotal());
+        boolean isSuccess = mOrdersService.insertOrderByCart(orders);
+        if (!isSuccess){
+            return "";
+        }
+
         if (cart != null){
 
             orders.setTotal(cart.getTotal());
@@ -73,19 +77,16 @@ public class OrderController extends BaseController {
                 Orderitem orderitem = new Orderitem();
 
                 orderitem.setCount(cart.getItem().get(id).getBuyNum());
-
+                orderitem.setOrders(orders);
                 orderitem.setOid(oid);
-
                 orderitem.setSubtotal(cart.getItem().get(id).getCost());
-
                 orderitem.setPid(cart.getItem().get(id).getProduct().getPid());
-
                 orderitem.setItemid(CommonUtils.getUUid());
-
+                orderitem.setProduct(cart.getItem().get(id).getProduct());
                 Status = mOrderItemService.insertOrderItemByCart(orderitem);
 
                 if (!Status){
-                    pid = id;
+//                    pid = id;
                     break;
                 }
                 datas.add(orderitem);

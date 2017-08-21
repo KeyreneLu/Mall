@@ -14,6 +14,7 @@ import javax.imageio.ImageIO;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
@@ -149,7 +150,31 @@ public class UserController extends BaseController{
         }else {
             map.put("flag",false);
         }
+        return map;
+    }
+
+    @RequestMapping("/user/login")
+    @ResponseBody
+    public Map userLogin(String username, String password,HttpServletRequest request, HttpServletResponse response){
+        Map<String,Object> map = new HashMap<>();
+        HttpSession session = request.getSession();
+        User user = userService.selectUserLoginByName(username);
+
+        if (user !=null){
+            if (user.getPassword().equals(password)){
+                map.put("code",200);
+                map.put("msg","登录成功!");
+                session.setAttribute("user",user);
+            }else {
+                map.put("code",101);
+                map.put("msg","密码错误!");
+            }
+        }else {
+            map.put("code",100);
+            map.put("msg","用户名不存在!");
+        }
 
         return map;
+
     }
 }
