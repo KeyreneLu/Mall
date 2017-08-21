@@ -4,8 +4,10 @@
 <!-- 登录 注册 购物车... -->
 <div class="container-fluid">
 	<div class="col-md-4">
-		<img src="/img/logo2.png" />
+		<img src="/img/icon_yue.png" />
+		<span style="color: #1d1d1d;font-size: 30px;text-align: center">微淘商城</span>
 	</div>
+
 	<div class="col-md-5">
 		<img src="/img/header.png" />
 	</div>
