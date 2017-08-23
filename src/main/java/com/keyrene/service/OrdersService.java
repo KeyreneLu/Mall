@@ -8,4 +8,6 @@ import com.keyrene.po.Orders;
 public interface OrdersService {
 
     boolean insertOrderByCart(Orders orders);
+
+    boolean updateAddressByOid(Orders orders);
 }

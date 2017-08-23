@@ -9,15 +9,13 @@ import com.keyrene.service.OrdersService;
 import com.keyrene.utils.CommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Dell on 2017/8/20.
@@ -97,6 +95,17 @@ public class OrderController extends BaseController {
         request.setAttribute("orders", orders);
 
         return "order_info";
+    }
 
+    @RequestMapping("/order/update")
+    public void updateOrdersToPay(@ModelAttribute("form") Orders orders, HttpServletRequest request, HttpServletResponse response){
+
+        boolean status = mOrdersService.updateAddressByOid(orders);
+
+        request.getSession().removeAttribute("cart");
+
+        String pd_FrpId = request.getParameter("pd_FrpId");
+
+        System.out.print(pd_FrpId);
     }
 }

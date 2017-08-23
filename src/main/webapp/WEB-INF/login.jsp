@@ -217,7 +217,7 @@
             type:"post",
             dataType:"json",
             success:function (result) {
-                if(result && result.code == 200){
+                if(result.code == 200){
                     layer.msg(result.msg);
                     window.location.href="/cart";
                 }else {
